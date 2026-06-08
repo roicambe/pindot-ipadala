@@ -1,0 +1,16 @@
+{
+  "name": "TapSend PH",
+  "short_name": "TapSend",
+  "description": "Offline-first Stellar payments via QR and NFC for the Philippines",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

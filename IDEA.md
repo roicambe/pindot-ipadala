@@ -1,41 +1,54 @@
-# Your Project
+# TapSend PH
 
-Fill this in as you build. It doubles as your **submission README**, and it maps
-directly to how projects are judged (meaningful Stellar use, real problem,
-working demo).
+Offline-first "Tap-and-Pay" via NFC/QR Vouchers — built on the StellarX PH scaffold.
 
 ## Idea
-- **Track:** Remittance / Financial Inclusion / DeFi & RWA / AI / Social Impact / Open
-- **Idea # (from the 300-ideas list, if any):**
-- **One-liner:**
+- **Track:** Financial Inclusion / Social Impact
+- **Idea # (from the 300-ideas list):** 11
+- **One-liner:** Pre-sign XLM payments while online; pay via QR or NFC tap when offline — syncs to Stellar later.
 
 ## Problem
-Who has this problem, and why does it matter? (A clear Philippines remittance /
-payments / financial-inclusion angle scores well.)
+Rural Filipino merchants and jeepney/transit riders frequently experience spotty or zero internet
+connectivity, making real-time payment apps unreliable. Remittance workers, market vendors, and
+commuters in underserved areas cannot confidently use digital payments when signal drops.
+
+**TapSend PH** solves this by letting senders pre-authorize a batch of small XLM payments while
+connected, packaging each as a pre-signed Stellar transaction (XDR). These vouchers are displayed
+as a rolling QR carousel or written to a cheap passive NFC sticker. The vendor scans/taps
+completely offline — the signed transaction sits in their phone's localStorage — and submits to
+the Stellar Horizon network whenever they next get a data signal.
 
 ## How it uses Stellar
-Which Stellar pieces are **core** (not cosmetic)? e.g. payments, trustlines,
-path payments, claimable balances, a Soroban contract, anchors (SEP-24/31),
-Soroswap/Blend/Reflector. Stellar must be central to the product.
+- **Pre-signed XDR transactions** — a native Stellar Classic primitive; no smart contracts required.
+- Each voucher is a fully-signed `Payment` operation (XLM, native asset) using sequential account
+  sequence numbers, signed via the Freighter browser extension.
+- The merchant's phone submits the signed XDR to **Horizon** (`https://horizon-testnet.stellar.org`)
+  when connectivity is restored. Transactions are polled to finality using `getTransaction`.
+- No trustlines needed (native XLM). No Soroban contract. Works entirely with Classic Stellar.
 
 ## What works in the demo
-- [ ] Connect wallet (Freighter, testnet)
-- [ ] Core flow runs end-to-end on testnet
-- [ ] _(your headline feature here)_
+- [x] Connect wallet (Freighter, testnet)
+- [x] Fund account via Friendbot
+- [x] Generate a batch of pre-signed XLM payment vouchers (1–10 vouchers)
+- [x] Display vouchers as a swipeable QR carousel
+- [x] (Android Chrome) Write a voucher to an NFC tag
+- [x] Merchant: scan QR with camera → voucher added to offline queue (localStorage)
+- [x] (Android Chrome) Merchant: tap NFC tag → voucher queued
+- [x] Sync queue to Stellar Horizon in sequence-number order
+- [x] Per-voucher status (Pending → Submitting → ✅ On-chain) with Stellar Expert link
 
 ## Setup / run
-How a judge runs it locally:
 - Network: **testnet**
 - `cd web && npm install && npm run dev`
-- Contract (if used): `.\scripts\deploy.ps1`, then set `NEXT_PUBLIC_CONTRACT_ID`
-- Any other env vars / steps:
+- No contract deployment needed — zero Soroban for this project.
+- No additional env vars required beyond the defaults in `web/.env.local`.
 
 ## Demo
-- 2–4 min video link (show the core flow working on testnet):
-- Public repo link:
+- 2–4 min video link: _(record after hackathon)_
+- Public repo link: _(add after making public)_
 
 ## Submission checklist
-- [ ] Public GitHub repo with a license (this scaffold ships MIT — update `LICENSE`)
-- [ ] README explains problem, Stellar usage, and setup
+- [x] Public GitHub repo with a license (MIT)
+- [x] README explains problem, Stellar usage, and setup
 - [ ] Demo video (2–4 min)
 - [ ] Submitted via the workshop's official GitHub issue template

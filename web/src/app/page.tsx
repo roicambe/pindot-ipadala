@@ -1,75 +1,55 @@
 'use client';
-import { useState, useCallback } from 'react';
-import { useWallet } from '@/hooks/useWallet';
-import ConnectWallet from '@/components/ConnectWallet';
-import FundAccount from '@/components/FundAccount';
-import AddTrustline from '@/components/AddTrustline';
-import BalanceCard from '@/components/BalanceCard';
-import SendPayment from '@/components/SendPayment';
-import SavingsGoal from '@/components/SavingsGoal';
+import { useState } from 'react';
+import RoleSelector, { type Role } from '@/components/RoleSelector';
+import VoucherGenerator from '@/components/VoucherGenerator';
+import MerchantScanner from '@/components/MerchantScanner';
 
 export default function Home() {
-  const wallet = useWallet();
-  const { publicKey, connecting } = wallet;
-  const [refreshKey, setRefreshKey] = useState(0);
-  const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
+  const [role, setRole] = useState<Role>(null);
 
   return (
-    <main className="min-h-screen w-full bg-gray-50">
-      <div className="mx-auto max-w-lg px-4 py-12">
-        <header className="mb-8 flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">StellarX Starter</h1>
-            <p className="text-sm text-gray-500">
-              Wallet · payments · Soroban — testnet
-            </p>
-          </div>
-          <ConnectWallet {...wallet} />
-        </header>
-
-        {!publicKey && !connecting && (
-          <div className="rounded border border-gray-200 bg-white py-16 text-center text-gray-500">
-            <p className="mb-2">Connect your Freighter wallet to get started.</p>
-            <p className="text-sm">
-              No wallet?{' '}
-              <a
-                href="https://freighter.app"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-indigo-600 hover:underline"
-              >
-                Install Freighter
-              </a>{' '}
-              and switch it to Test Net.
-            </p>
-          </div>
-        )}
-
-        {publicKey && (
-          <>
-            <div className="mb-2 flex flex-wrap items-center gap-3">
-              <FundAccount publicKey={publicKey} onFunded={refresh} />
-              <AddTrustline publicKey={publicKey} onDone={refresh} />
+    <main className="app">
+      {/* Header */}
+      <header className="app-header">
+        <div className="app-header__inner">
+          <div className="app-header__brand">
+            <span className="app-header__logo">⚡</span>
+            <div>
+              <h1 className="app-header__title">TapSend PH</h1>
+              <p className="app-header__tagline">Offline-first Stellar payments</p>
             </div>
-            <BalanceCard publicKey={publicKey} refreshKey={refreshKey} />
+          </div>
+          {role && (
             <button
-              onClick={refresh}
-              className="mt-3 text-sm text-gray-500 underline hover:text-gray-700"
+              id="back-btn"
+              className="btn btn--ghost btn--sm"
+              onClick={() => setRole(null)}
             >
-              Refresh balances
+              ← Back
             </button>
-            <SendPayment publicKey={publicKey} onSent={refresh} />
-          </>
-        )}
+          )}
+        </div>
+      </header>
 
-        {/* The Soroban panel renders even before connecting (reads are wallet-free). */}
-        <SavingsGoal publicKey={publicKey} />
-
-        <footer className="mt-10 text-center text-xs text-gray-400">
-          Built for the StellarX PH workshop @ PUP QC · pick an idea, then bend
-          this scaffold toward it.
-        </footer>
+      {/* Content */}
+      <div className="app-body">
+        {!role && <RoleSelector onSelect={setRole} />}
+        {role === 'sender' && <VoucherGenerator />}
+        {role === 'merchant' && <MerchantScanner />}
       </div>
+
+      {/* Footer */}
+      <footer className="app-footer">
+        Built on Stellar Testnet · StellarX PH Workshop @ PUP QC ·{' '}
+        <a
+          href="https://stellar.expert/explorer/testnet"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="app-footer__link"
+        >
+          Stellar Expert ↗
+        </a>
+      </footer>
     </main>
   );
 }
